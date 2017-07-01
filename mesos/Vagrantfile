@@ -1,0 +1,99 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+#
+Vagrant.require_version ">=1.9.3"
+
+HOST_IP = "192.168.33.11"
+
+$install_common = <<SCRIPT
+yum install -y yum-utils java-1.8.0-openjdk.x86_64
+yum install -y http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install -y http://archive.cloudera.com/cdh5/one-click-install/redhat/7/x86_64/cloudera-cdh-5-0.x86_64.rpm
+SCRIPT
+
+
+$install_chronos = <<SCRIPT
+yum install -y chronos-2.4.0-0.1.20151007110204.el7.x86_64
+mkdir -p /etc/chronos/conf
+echo "#{HOST_IP}" > /etc/chronos/conf/hostname
+echo "/chronos/state" > /etc/chronos/conf/zk_path
+echo "chronos" > /etc/chronos/conf/mesos_role
+echo "chronos" > /etc/chronos/conf/mesos_framework_name
+echo "4400" > /etc/chronos/conf/http_port
+systemctl start chronos
+SCRIPT
+
+
+$install_marathon = <<SCRIPT
+yum install -y marathon-1.4.4-1.0.653.el7.x86_64
+mkdir -p /etc/marathon/conf
+echo "zk://#{HOST_IP}:2181/mesos" > /etc/marathon/conf/master
+echo "zk://#{HOST_IP}:2181/marathon" > /etc/marathon/conf/zk
+echo "marathon" > /etc/marathon/conf/mesos_role
+echo "marathon" > /etc/marathon/conf/framework_name
+echo "#{HOST_IP}" > /etc/marathon/conf/hostname
+cp -f /vagrant/marathon /usr/bin/marathon
+systemctl start marathon
+SCRIPT
+
+
+$install_docker= <<SCRIPT
+yum install -y docker-ce-17.03.1.ce-1.el7.centos.x86_64
+systemctl start docker
+SCRIPT
+
+
+$install_mesos = <<SCRIPT
+yum install -y mesos-1.3.0-2.0.3.x86_64
+mkdir -p /etc/mesos
+echo "zk://#{HOST_IP}:2181/mesos" > /etc/mesos/zk
+mkdir -p /etc/mesos-master
+echo "#{HOST_IP}" > /etc/mesos-master/ip
+echo "#{HOST_IP}" > /etc/mesos-master/hostname
+echo "1" > /etc/mesos-master/quorum
+echo "/var/lib/mesos" > /etc/mesos-master/work_dir
+systemctl start mesos-master
+mkdir -p /etc/mesos-slave
+echo "#{HOST_IP}" > /etc/mesos-slave/ip
+echo "#{HOST_IP}" > /etc/mesos-slave/hostname
+echo "var/lib/mesos" > /etc/mesos-slave/work_dir
+systemctl start mesos-slave
+SCRIPT
+
+$install_zookeeper = <<SCRIPT
+yum install -y zookeeper-3.4.5+cdh5.11.1+111-1.cdh5.11.1.p0.6.el7.x86_64
+yum install -y zookeeper-server-3.4.5+cdh5.11.1+111-1.cdh5.11.1.p0.6.el7.x86_64
+service zookeeper-server init --myid=1
+echo "server.1=#{HOST_IP}:2888:3888" >> /var/lib/zookeeper/conf/zoo.cfg
+systemctl start zookeeper-server
+SCRIPT
+
+$dns = <<SCRIPT
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.define "mesos" do |centos7|
+    centos7.vm.box = "centos/7"
+    centos7.vm.network "private_network", ip: HOST_IP
+    centos7.vm.hostname = "mesos"
+    centos7.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 2
+    end
+    centos7.vm.provision "shell", inline: $dns
+    centos7.vm.provision "shell", inline: $install_common
+    centos7.vm.provision "shell", inline: $install_zookeeper
+    centos7.vm.provision "shell", inline: $install_docker
+    centos7.vm.provision "shell", inline: $install_mesos
+    centos7.vm.provision "shell", inline: $install_marathon
+    centos7.vm.provision "shell", inline: $install_chronos
+  end
+  config.vm.box_check_update = false
+end
