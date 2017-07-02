@@ -14,10 +14,10 @@ $install_go = <<SCRIPT
 # yum install -y gcc
 curl -o go1.8.3.linux-amd64.tar.gz https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
 tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz && rm -rf go1.8.3.linux-amd64.tar.gz
-mkdir -p $HOME/golang1.8.3
-echo "export GOPATH=/root/go" >> /etc/bashrc
-echo "export GOBIN=$GOPATH/bin" >> /etc/bashrc
-echo "export PATH=$PATH:/usr/local/go/bin:$GOBIN" >> /etc/bashrc
+mkdir -p $HOME/golang
+echo "export GOPATH=/root/golang" >> /etc/bashrc
+echo "export GOBIN=/root/golang/bin" >> /etc/bashrc
+echo "export PATH=$PATH:/usr/local/go/bin:/root/golang/bin" >> /etc/bashrc
 SCRIPT
 
 $install_vim_plugin = <<SCRIPT
