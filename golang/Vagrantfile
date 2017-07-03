@@ -23,8 +23,8 @@ SCRIPT
 $install_vim_plugin = <<SCRIPT
 yum install -y vim gcc gcc-c++ git python-devel ncurses-devel automake kernel-devel cmake
 cp -rf /vagrant/.vim ~/ && cp /vagrant/.vimrc ~/ && cp /vagrant/.vimrc.bundles ~/
-cd ~/.vim/bundle/YouCompleteMe/ && ./install.py --gocode-completer --clang-completer
-vim +GoInstallBinaries +qall
+cd ~/.vim/bundle/YouCompleteMe/ && ./install.py  --clang-completer
+cd /vagrant && chmod +x install.sh &&./install.sh
 SCRIPT
 
 $install_ctags = <<SCRIPT
@@ -32,6 +32,7 @@ cp -rf ~/.vim /home/vagrant/
 curl -o ctags.tar.gz https://jaist.dl.sourceforge.net/project/ctags/ctags/5.8/ctags-5.8.tar.gz
 tar -xzf ctags.tar.gz && cd ctags-5.8
 ./configure --prefix=/usr && make && make install
+cd /vagrant && ./install
 rm -rf /home/vagrant/ctags*
 SCRIPT
 
