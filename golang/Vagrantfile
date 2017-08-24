@@ -21,6 +21,7 @@ echo "export PATH=$PATH:/usr/local/go/bin:/root/golang/bin" >> /etc/bashrc
 SCRIPT
 
 $install_vim_plugin = <<SCRIPT
+yum install -y unzip wget
 yum install -y vim gcc gcc-c++ git python-devel ncurses-devel automake kernel-devel cmake
 cp -rf /vagrant/.vim ~/ && cp /vagrant/.vimrc ~/ && cp /vagrant/.vimrc.bundles ~/
 cd ~/.vim/bundle/YouCompleteMe/ && ./install.py  --clang-completer
