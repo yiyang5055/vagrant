@@ -59,28 +59,32 @@ flags = [
 # For a C project, you would set this to 'c' instead of 'c++'.
 '-x',
 'c++',
-'-isystem',
-'../BoostParts',
-'-isystem',
+# '-isystem',
+# '../BoostParts',
+# '-isystem',
 # This path will only work on OS X, but extra paths that don't exist are not
 # harmful
-'/System/Library/Frameworks/Python.framework/Headers',
-'-isystem',
-'../llvm/include',
-'-isystem',
-'../llvm/tools/clang/include',
+# '/System/Library/Frameworks/Python.framework/Headers',
+# '-isystem',
+#'../llvm/include',
+# '-isystem',
+# '../llvm/tools/clang/include',
 '-I',
 '.',
-'-I',
-'./ClangCompleter',
+# '-I',
+# './ClangCompleter',
+# '-isystem',
+# './tests/gmock/gtest',
+# '-isystem',
+# './tests/gmock/gtest/include',
+# '-isystem',
+# './tests/gmock',
+# '-isystem',
+# './tests/gmock/include',
 '-isystem',
-'./tests/gmock/gtest',
+'/usr/include',
 '-isystem',
-'./tests/gmock/gtest/include',
-'-isystem',
-'./tests/gmock',
-'-isystem',
-'./tests/gmock/include',
+'/usr/include/c++/4.8.5'
 ]
 
 
@@ -179,7 +183,8 @@ def FlagsForFile( filename, **kwargs ):
     except ValueError:
       pass
   else:
-    relative_to = DirectoryOfThisScript()
+    # relative_to = DirectoryOfThisScript()
+    relative_to = "/usr/include/"
     final_flags = MakeRelativePathsInFlagsAbsolute( flags, relative_to )
 
   return { 'flags': final_flags }
