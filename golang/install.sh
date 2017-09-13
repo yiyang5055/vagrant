@@ -14,3 +14,4 @@ go get -v github.com/fatih/motion
 go get -v github.com/fatih/gomodifytags
 go get -v github.com/zmb3/gogetdoc
 go get -v github.com/josharian/impl
+go get -v github.com/kardianos/govendor
