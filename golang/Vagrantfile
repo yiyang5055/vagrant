@@ -49,5 +49,6 @@ Vagrant.configure("2") do |config|
     centos7.vm.provision "shell", inline: $install_vim_plugin
     centos7.vm.provision "shell", inline: $install_ctags
   end
+  config.vm.synced_folder "./", "/vagrant", :nfs => true
   config.vm.box_check_update = false
 end
