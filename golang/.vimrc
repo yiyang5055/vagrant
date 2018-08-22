@@ -11,6 +11,7 @@ set cursorline "cursorcolumn
 " Leader
 let mapleader = ","
 
+set mouse=a
 set backspace=2   " Backspace deletes like most programs in insert mode
 set nobackup
 set nowritebackup
