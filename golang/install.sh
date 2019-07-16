@@ -3,9 +3,9 @@ cd ~/golang && rm -rf src/golang.org/ && git clone https://github.com/golang/too
 go install golang.org/x/tools/cmd/goimports
 go install golang.org/x/tools/cmd/guru
 go install golang.org/x/tools/cmd/gorename
-go get -v github.com/nsf/gocode
-go get -v github.com/alecthomas/gometalinter
-go get -v github.com/golang/lint/golint
+go install golang.org/x/lint/golint
+go get -v github.com/stamblerre/gocode
+go get -v github.com/golangci/golangci-lint/cmd/golangci-lint
 go get -v github.com/rogpeppe/godef
 go get -v github.com/kisielk/errcheck
 go get -v github.com/jstemmer/gotags
