@@ -35,16 +35,25 @@ tar -xzf ctags.tar.gz && cd ctags-5.8
 rm -rf /home/vagrant/ctags*
 SCRIPT
 
+$install_docker = <<SCRIPT
+yum install -y yum-utils device-mapper-persistent-data lvm2
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install -y docker-ce docker-ce-cli containerd.io
+systemctl start docker
+systemctl enable docker
+SCRIPT
+
 Vagrant.configure("2") do |config|
     config.vm.define "centos7-dev" do |centos7|
     centos7.vm.box = "centos/7"
     centos7.vm.network "private_network", ip: HOST_IP
     centos7.vm.hostname = "dev"
     centos7.vm.provider "virtualbox" do |v|
-        v.memory = 1024
+        v.memory = 2048
         v.cpus = 2
         v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
+    centos7.vm.provision "shell", inline: $install_docker
     centos7.vm.provision "shell", inline: $install_go
     centos7.vm.provision "shell", inline: $install_vim_plugin
     centos7.vm.provision "shell", inline: $install_ctags
