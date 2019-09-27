@@ -201,7 +201,7 @@ nnoremap <leader>w :w<CR>
 nnoremap <leader>q :q<CR>
 
 " Vim-instant-markdown doesn't work in zsh
-set shell=bash\ -i
+" set shell=bash\ -i
 
 " Snippets author
 let g:snips_author = 'Yuez'
