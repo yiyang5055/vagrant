@@ -11,7 +11,6 @@ Vagrant.require_version ">=1.9.3"
 HOST_IP = "192.168.33.10"
 
 $install_go = <<SCRIPT
-# yum install -y gcc
 curl -o go1.10.3.linux-amd64.tar.gz https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz
 tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz && rm -rf go1.10.3.linux-amd64.tar.gz
 mkdir -p $HOME/golang
@@ -21,18 +20,10 @@ echo "export PATH=$PATH:/usr/local/go/bin:/root/golang/bin" >> /etc/bashrc
 SCRIPT
 
 $install_vim_plugin = <<SCRIPT
-yum install -y vim gcc gcc-c++ git python-devel ncurses-devel automake kernel-devel cmake
+yum install -y vim ctags gcc gcc-c++ git python-devel ncurses-devel automake kernel-devel cmake
 cp -rf /vagrant/.vim ~/ && cp /vagrant/.vimrc ~/ && cp /vagrant/.vimrc.bundles ~/
 cd ~/.vim/bundle/YouCompleteMe/ && ./install.py --clang-completer
 cd /vagrant && chmod +x install.sh &&./install.sh
-SCRIPT
-
-$install_ctags = <<SCRIPT
-cp -rf ~/.vim /home/vagrant/
-curl -o ctags.tar.gz https://jaist.dl.sourceforge.net/project/ctags/ctags/5.8/ctags-5.8.tar.gz
-tar -xzf ctags.tar.gz && cd ctags-5.8
-./configure --prefix=/usr && make && make install
-rm -rf /home/vagrant/ctags*
 SCRIPT
 
 $install_docker = <<SCRIPT
@@ -56,7 +47,6 @@ Vagrant.configure("2") do |config|
     centos7.vm.provision "shell", inline: $install_docker
     centos7.vm.provision "shell", inline: $install_go
     centos7.vm.provision "shell", inline: $install_vim_plugin
-    centos7.vm.provision "shell", inline: $install_ctags
   end
   config.vm.synced_folder "./", "/vagrant", :nfs => true
   config.vm.box_check_update = false
